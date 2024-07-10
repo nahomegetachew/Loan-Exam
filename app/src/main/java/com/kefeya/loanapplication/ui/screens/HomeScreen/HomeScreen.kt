@@ -13,10 +13,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,9 +25,11 @@ import com.kefeya.loanapplication.navigation.Navigator
 
 @Composable
 fun HomeScreen(navigator: Navigator?) {
-    val loanViewModel = viewModel<LoanViewModel>()
-    var loanAmount by remember { mutableStateOf("") }
-    var loanTerm by remember { mutableStateOf("") }
+    val loanViewModel = viewModel<HomeViewModel>()
+    var loanAmount by remember { loanViewModel.amount }
+    var loanTerm by remember { loanViewModel.term }
+    val loanError by remember { loanViewModel.loanError }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -50,16 +52,13 @@ fun HomeScreen(navigator: Navigator?) {
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
+        if (loanError.isNotBlank()) {
+            Text(text = loanError, color = Color.Red)
+        }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-                val amount = loanAmount.toIntOrNull()
-                val term = loanTerm.toIntOrNull()
-                if (amount != null && term != null) {
-                    loanViewModel.insertLoan(amount, term)
-                } else {
-                    // Handle invalid input
-                }
+                loanViewModel.addLoan()
             },
             modifier = Modifier.fillMaxWidth()
         ) {

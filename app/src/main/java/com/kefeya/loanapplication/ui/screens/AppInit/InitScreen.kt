@@ -36,7 +36,6 @@ fun InitScreen(navigator: Navigator? = null){
     }
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
         Text("Loading...")
-//        Text(registrationStatus.toString())
     }
 }
 

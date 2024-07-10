@@ -9,10 +9,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -23,11 +22,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kefeya.loanapplication.navigation.Navigator
+import com.kefeya.loanapplication.navigation.Screen
 
 @Composable()
 fun LoginScreen(navigator: Navigator? = null) {
     val context = LocalContext.current
     val viewModel = viewModel<LoginViewModel>()
+    var logedIn by remember {
+        viewModel.logedIn
+    }
     var username by remember {
         viewModel.username
     }
@@ -42,6 +45,11 @@ fun LoginScreen(navigator: Navigator? = null) {
     }
     var loginError by remember {
         viewModel.loginError
+    }
+    LaunchedEffect(logedIn){
+        if (logedIn){
+            navigator?.navigate(Screen.Home,true,true)
+        }
     }
     Column(modifier = Modifier
         .fillMaxSize()
@@ -86,10 +94,6 @@ fun LoginScreen(navigator: Navigator? = null) {
             }) {
                 Text(text = "Login")
             }
-//            TextButton(modifier = Modifier.fillMaxWidth(),onClick = {
-//            }) {
-//                Text(text = "Register")
-//            }
         }
 
     }

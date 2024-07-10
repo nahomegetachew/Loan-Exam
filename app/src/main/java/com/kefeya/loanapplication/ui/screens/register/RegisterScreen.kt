@@ -12,10 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.traceEventStart
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kefeya.loanapplication.navigation.Navigator
 import com.kefeya.loanapplication.navigation.Screen
-import com.kefeya.loanapplication.ui.screens.login.LoginViewModel
 
 @Composable
 fun RegisterScreen(navigator: Navigator? = null) {
@@ -62,7 +59,7 @@ fun RegisterScreen(navigator: Navigator? = null) {
     }
     LaunchedEffect(registed){
         if (registed){
-            navigator?.navigate(Screen.Loan, true,true)
+            navigator?.navigate(Screen.Home, true,true)
         }
     }
     Column(modifier = Modifier

@@ -52,7 +52,7 @@ class RegistrationViewModel : ViewModel() {
             viewModelScope.launch {
                 context.writeString(DataKeys.REGISTRATION_STATUS,"REGISTERED")
                 context.writeString(DataKeys.USERNAME,username.value)
-                context.writeString(DataKeys.EMAIL,email.value)
+                context.writeString(DataKeys.PASSWORD,password.value)
                 registered.value = true
             }
         }
