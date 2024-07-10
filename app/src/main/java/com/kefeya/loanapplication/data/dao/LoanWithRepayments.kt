@@ -12,4 +12,7 @@ data class LoanWithRepayments(
         entityColumn = "loanId"
     )
     val repayments: List<Repayment>
-)
+){
+    val remainingAmount: Int
+        get() = loan.amount - repayments.sumOf { it.amount }
+}

@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kefeya.loanapplication.data.models.Repayment
@@ -52,23 +53,32 @@ fun LoanDetailScreen(navigator: Navigator?){
             LoanItem(loanWithRepayments = it)
         }
         Spacer(modifier = Modifier.padding(10.dp))
-        Row {
-            OutlinedTextField(
-                modifier = Modifier.weight(1f),
-                value = repayAmount,
-                onValueChange ={
-                    repayAmount = it
+        loan?.remainingAmount?.let {
+            if (it > 0){
+                Row {
+                    OutlinedTextField(
+                        modifier = Modifier.weight(1f),
+                        value = repayAmount,
+                        onValueChange ={
+                            repayAmount = it
+                        }
+                    )
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Button(onClick = {
+                        loanId?.let {
+                            viewModel.insertRepayment(loanId)
+                        }
+                    }) {
+                        Text(text = "Repay")
+                    }
                 }
-            )
-            Spacer(modifier = Modifier.padding(10.dp))
-            Button(onClick = {
-                loanId?.let {
-                    viewModel.insertRepayment(loanId)
-                }
-            }) {
-                Text(text = "Repay")
             }
         }
+
+        if (repayAmountError.isNotBlank()){
+            Text(text = repayAmountError, color = Color.Red)
+        }
+        Spacer(modifier = Modifier.padding(10.dp))
         Text(text = "Repayments")
         LazyColumn(modifier = Modifier
             .fillMaxWidth()

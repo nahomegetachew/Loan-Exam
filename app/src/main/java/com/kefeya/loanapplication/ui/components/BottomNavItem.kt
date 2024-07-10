@@ -1,6 +1,7 @@
 package com.kefeya.loanapplication.ui.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -10,5 +11,6 @@ data class BottomNavItem(val route: Screen, val icon: ImageVector, val label: St
 
 val BottomNavItems = listOf(
     BottomNavItem(Screen.Home, Icons.Default.Home, "Home"),
-    BottomNavItem(Screen.Loans, Icons.Default.List, "Loans")
+    BottomNavItem(Screen.Loans, Icons.Default.List, "Loans"),
+    BottomNavItem(Screen.History, Icons.Default.CheckCircle, "History")
 )

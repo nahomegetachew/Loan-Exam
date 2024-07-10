@@ -21,7 +21,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _loanWithRepayments = MutableLiveData<List<LoanWithRepayments>>()
 
 
-    fun addLoan(){
+    fun addLoan(onSuccess: () -> Unit ={}){
         val loanAmount = amount.value.toIntOrNull() ?: 0
         val loanTerm = term.value.toIntOrNull() ?: 0
         loanError.value = ""
@@ -35,9 +35,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val loan = Loan(amount = loanAmount, term = loanTerm)
             loanDao.insertLoan(loan)
+            amount.value = ""
+            term.value = ""
+            onSuccess()
         }
-        amount.value = ""
-        term.value = ""
+
     }
 
 }

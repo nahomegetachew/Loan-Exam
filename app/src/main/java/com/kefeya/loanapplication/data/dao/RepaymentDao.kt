@@ -10,6 +10,6 @@ interface RepaymentDao {
     @Insert
     suspend fun insertRepayment(repayment: Repayment): Long
 
-    @Query("SELECT * FROM repayments WHERE loanId = :loanId")
+    @Query("SELECT * FROM repayments WHERE loanId = :loanId  ORDER BY id DESC")
     suspend fun getRepaymentsForLoan(loanId: Int): List<Repayment>
 }

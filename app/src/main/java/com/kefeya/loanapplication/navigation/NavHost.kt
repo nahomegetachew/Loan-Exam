@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,10 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.kefeya.loanapplication.ui.components.BottomNavItems
 import com.kefeya.loanapplication.ui.components.BottomNavigationBar
 import com.kefeya.loanapplication.ui.screens.AppInit.InitScreen
+import com.kefeya.loanapplication.ui.screens.History.LoansHistoryScreen
 import com.kefeya.loanapplication.ui.screens.HomeScreen.HomeScreen
 import com.kefeya.loanapplication.ui.screens.LoanDetail.LoanDetailScreen
 import com.kefeya.loanapplication.ui.screens.Loans.LoansScreen
@@ -61,8 +64,13 @@ fun AppNavigation() {
             current = page
         }
     }
-    val bottomNavItemDestination = BottomNavItems.map { it.route.name }
-    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    val bottomNavItemDestination = listOf(
+        Screen.Home.name,
+        Screen.Loans.name,
+        Screen.History.name,
+        Screen.LoanDetail.name)
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
     Column() {
 //        Text(text = currentRoute.toString())
 //        Text(text = navigator.current.name)
@@ -70,7 +78,7 @@ fun AppNavigation() {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             bottomBar = {
-                if (bottomNavItemDestination.contains(navigator.current.name)) {
+                if (bottomNavItemDestination.contains(currentRoute.toString())) {
                     BottomNavigationBar(navigator)
                 }
             }
@@ -108,6 +116,11 @@ fun AppNavigation() {
                 }
                 composable(Screen.LoanDetail.name) { // Define HomeScreen destination
                     LoanDetailScreen(
+                        navigator
+                    )
+                }
+                composable(Screen.History.name) { // Define HomeScreen destination
+                    LoansHistoryScreen(
                         navigator
                     )
                 }

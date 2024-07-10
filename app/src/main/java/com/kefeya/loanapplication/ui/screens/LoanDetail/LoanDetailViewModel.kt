@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.kefeya.loanapplication.data.dao.LoanDao
 import com.kefeya.loanapplication.data.dao.LoanWithRepayments
 import com.kefeya.loanapplication.data.dao.RepaymentDao
+import com.kefeya.loanapplication.data.models.LoanStatus
 import com.kefeya.loanapplication.data.models.Repayment
 import com.kefeya.loanapplication.utils.database.LoanDatabase
 import kotlinx.coroutines.launch
@@ -31,15 +32,23 @@ class LoanDetailViewModel (application: Application) : AndroidViewModel(applicat
     }
 
     fun insertRepayment(loanId: Int) {
+        repaymentAmountError.value = ""
         val amount = repaymentAmount.value.toIntOrNull() ?: 0
+        if (amount <= 0) {
+            repaymentAmountError.value = "invalid Repayment amount"
+            return
+        }
         viewModelScope.launch {
-            val loanWithRemainingAmount = loanDao.getLoanWithRemainingAmount(loanId)
-            if (amount > loanWithRemainingAmount.remainingAmount) {
-                repaymentAmount.value = "Repayment amount cannot exceed the remaining loan amount of ${loanWithRemainingAmount.remainingAmount}"
+            val loanWithRepayments = loanDao.getLoanWithRepayments(loanId)
+            if (amount > loanWithRepayments.remainingAmount) {
+                repaymentAmountError.value = "Repayment amount cannot exceed the remaining loan amount of ${loanWithRepayments.remainingAmount}"
             } else {
                 val repayment = Repayment(loanId = loanId, amount = amount)
                 repaymentDao.insertRepayment(repayment)
                 getLoanWithRepayments(loanId)
+                if (loanWithRepayments.remainingAmount - amount == 0) {
+                    loanDao.updateLoanStatus(loanId, LoanStatus.PAID)
+                }
             }
         }
     }
@@ -49,5 +58,7 @@ class LoanDetailViewModel (application: Application) : AndroidViewModel(applicat
             _loanWithRepayments.value = loanDao.getLoanWithRepayments(loanId)
         }
     }
+
+
 
 }

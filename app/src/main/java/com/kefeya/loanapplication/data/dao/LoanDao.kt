@@ -5,44 +5,55 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import com.kefeya.loanapplication.data.models.Loan
+import com.kefeya.loanapplication.data.models.LoanStatus
 import com.kefeya.loanapplication.data.models.Repayment
 
 @Dao
 interface LoanDao {
-    @Insert
-    suspend fun insertLoan(loan: Loan): Long
+        @Insert
+        suspend fun insertLoan(loan: Loan): Long
 
-    @Insert
-    suspend fun insertRepayment(repayment: Repayment): Long
+        @Insert
+        suspend fun insertRepayment(repayment: Repayment): Long
 
-    @Query("SELECT * FROM loans")
-    suspend fun getAllLoans(): List<Loan>
+        @Query("SELECT * FROM loans WHERE status = :status")
+        suspend fun getLoansByStatus(status: LoanStatus): List<Loan>
 
-    @Query("SELECT * FROM loans WHERE id = :loanId LIMIT 1")
-    suspend fun getLoanById(loanId: Int): Loan
-
-    @Transaction
-    @Query("SELECT * FROM loans WHERE id = :loanId")
-    suspend fun getLoanWithRepayments(loanId: Int): LoanWithRepayments
-
-    @Transaction
-    @Query("SELECT * FROM loans")
-    suspend fun getAllLoansWithRepayments(): List<LoanWithRepayments>
-
-    @Query("""
-        SELECT l.*, (l.amount - IFNULL(SUM(r.amount), 0)) AS remainingAmount 
-        FROM loans l 
-        LEFT JOIN repayments r ON l.id = r.loanId 
-        GROUP BY l.id
-        HAVING l.id = :loanId
+        @Transaction
+        @Query("""
+        SELECT * FROM loans WHERE id = :loanId
     """)
-    suspend fun getLoanWithRemainingAmount(loanId: Int): Loan
+        suspend fun getLoanWithRepayments(loanId: Int): LoanWithRepayments
 
-    @Query("""
-        SELECT l.*, (l.amount - IFNULL(SUM(r.amount), 0)) AS remainingAmount 
-        FROM loans l 
-        LEFT JOIN repayments r ON l.id = r.loanId 
-        GROUP BY l.id
+        @Transaction
+        @Query("""
+        SELECT * FROM loans
+        WHERE id IN (
+            SELECT loans.id
+            FROM loans
+            LEFT JOIN repayments ON loans.id = repayments.loanId
+            GROUP BY loans.id
+            HAVING SUM(COALESCE(repayments.amount, 0)) < loans.amount
+        )
+        ORDER BY id DESC
     """)
-    suspend fun getAllLoansWithRemainingAmounts(): List<Loan>
+        suspend fun getAllUnpaidLoansWithRepayments(): List<LoanWithRepayments>
+
+        @Query("UPDATE loans SET status = :status WHERE id = :loanId")
+        suspend fun updateLoanStatus(loanId: Int, status: LoanStatus)
+
+        @Transaction
+        @Query("""
+        SELECT * FROM loans 
+        WHERE id IN (
+            SELECT loanId FROM repayments 
+            GROUP BY loanId 
+            HAVING SUM(amount) = (SELECT amount FROM loans WHERE id = loanId)
+        )
+        ORDER BY id DESC
+    """)
+        suspend fun getAllPaidLoansWithRepayments(): List<LoanWithRepayments>
+
+
+
 }

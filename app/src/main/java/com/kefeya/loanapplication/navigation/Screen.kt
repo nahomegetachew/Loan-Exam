@@ -7,5 +7,5 @@ sealed class Screen(var name:String) {
     object Home : Screen(name = "home")
     object Loans : Screen(name = "Loans")
     object LoanDetail : Screen(name = "LoanDetail")
-    object Repayments : Screen(name = "Repayments")
+    object History : Screen(name = "history")
 }

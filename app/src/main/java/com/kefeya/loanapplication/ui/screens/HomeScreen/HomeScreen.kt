@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kefeya.loanapplication.navigation.Navigator
+import com.kefeya.loanapplication.navigation.Screen
 
 @Composable
 fun HomeScreen(navigator: Navigator?) {
@@ -58,7 +59,9 @@ fun HomeScreen(navigator: Navigator?) {
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-                loanViewModel.addLoan()
+                loanViewModel.addLoan(){
+                    navigator?.navigate(Screen.Loans)
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {

@@ -1,4 +1,4 @@
-package com.kefeya.loanapplication.ui.screens.Loans
+package com.kefeya.loanapplication.ui.screens.History
 
 import android.app.Application
 import androidx.compose.runtime.MutableState
@@ -10,7 +10,7 @@ import com.kefeya.loanapplication.data.dao.LoanWithRepayments
 import com.kefeya.loanapplication.utils.database.LoanDatabase
 import kotlinx.coroutines.launch
 
-class LoansViewModel(application: Application) : AndroidViewModel(application) {
+class LoanHistoryViewModel(application: Application) : AndroidViewModel(application) {
     private val loanDao: LoanDao = LoanDatabase.getDatabase(application).loanDao()
 
     private val _loanWithRepayments = mutableStateOf<List<LoanWithRepayments>?>(null)
@@ -18,7 +18,7 @@ class LoansViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getAllLoansWithRepayments() {
         viewModelScope.launch {
-            _loanWithRepayments.value = loanDao.getAllUnpaidLoansWithRepayments()
+            _loanWithRepayments.value = loanDao.getAllPaidLoansWithRepayments()
         }
     }
 }

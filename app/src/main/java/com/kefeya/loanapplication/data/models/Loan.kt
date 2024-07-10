@@ -21,8 +21,7 @@ data class Loan(
 
 enum class LoanStatus {
     PENDING,
-    APPROVED,
-    PAID_OFF
+    PAID
 }
 
 class LoanStatusConverter {
